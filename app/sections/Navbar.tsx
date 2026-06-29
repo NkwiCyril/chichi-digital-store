@@ -7,7 +7,7 @@ const navLinks = [
   ["Features", "#features"],
   ["Pricing", "#pricing"],
   ["FAQ", "#faq"],
-  ["Blog", "#"],
+  ["Blog", "#blog"],
 ] as const;
 
 export default function Navbar() {
@@ -63,10 +63,10 @@ export default function Navbar() {
               Sign in
             </Link>
             <Link
-              href="/register"
+              href="/register?role=creator"
               className="text-sm font-medium bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg transition-colors"
             >
-              Get started free
+              Start selling
             </Link>
           </div>
 
@@ -104,10 +104,10 @@ export default function Navbar() {
                 Sign in
               </Link>
               <Link
-                href="/register"
+                href="/register?role=creator"
                 className="text-center text-sm font-medium bg-violet-600 text-white py-2.5 rounded-lg hover:bg-violet-700 transition-colors"
               >
-                Get started free
+                Start selling
               </Link>
             </div>
           </div>

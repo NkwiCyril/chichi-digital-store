@@ -14,16 +14,16 @@ export default function CTASection() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href="#"
+            href="/register?role=creator"
             className="inline-flex items-center justify-center bg-white text-violet-700 font-semibold px-8 py-4 rounded-xl hover:bg-violet-50 transition-colors text-sm"
           >
-            Start for free
+            Start selling free
           </a>
           <a
-            href="#"
+            href="/register?role=buyer"
             className="inline-flex items-center justify-center border-2 border-violet-400 text-white font-semibold px-8 py-4 rounded-xl hover:bg-violet-500 transition-colors text-sm"
           >
-            Talk to sales
+            Browse marketplace
           </a>
         </div>
         <p className="mt-8 text-sm text-violet-300">No credit card required · MTN MoMo &amp; Orange Money supported</p>

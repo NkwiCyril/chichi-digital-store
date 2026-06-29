@@ -53,15 +53,15 @@ export default function HeroSection() {
 
             <p className="text-xl text-zinc-500 leading-relaxed mb-10">
               Build your storefront in minutes. Sell ebooks, courses, templates,
-              and more — with instant delivery and zero transaction fees on Pro.
+              and more — with instant delivery, no monthly fees, and MTN MoMo &amp; Orange Money built in.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 mb-8">
               <a
-                href="#"
+                href="/register?role=creator"
                 className="inline-flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold px-6 py-3.5 rounded-xl transition-colors shadow-lg shadow-violet-100"
               >
-                Start for free
+                Start selling free
                 <svg
                   className="w-4 h-4"
                   fill="none"

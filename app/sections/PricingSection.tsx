@@ -1,66 +1,19 @@
-'use client';
+import Link from "next/link";
 
-import { useState } from "react";
+const COMMISSION_RATE = 10; // percent per sale
 
-const plans = [
-  {
-    name: "Free",
-    monthly: 0,
-    yearly: 0,
-    description: "Perfect for getting started",
-    features: [
-      "Up to 3 products",
-      "5% platform fee",
-      "Basic analytics",
-      "Standard storefront",
-      "Community support",
-    ],
-    cta: "Get started free",
-    highlight: false,
-  },
-  {
-    name: "Pro",
-    monthly: 15000,
-    yearly: 12000,
-    description: "For serious creators",
-    features: [
-      "Unlimited products",
-      "0% platform fee",
-      "Advanced analytics",
-      "Custom domain",
-      "Priority email support",
-      "Custom storefront themes",
-      "Automated email sequences",
-    ],
-    cta: "Start free trial",
-    highlight: true,
-  },
-  {
-    name: "Business",
-    monthly: 45000,
-    yearly: 36000,
-    description: "For teams and agencies",
-    features: [
-      "Everything in Pro",
-      "Up to 5 team members",
-      "API access",
-      "White-label storefronts",
-      "Priority phone support",
-      "Custom integrations",
-      "Dedicated account manager",
-    ],
-    cta: "Contact sales",
-    highlight: false,
-  },
-] as const;
+const included = [
+  "Unlimited products & storefronts",
+  "Instant automated file delivery",
+  "MTN MoMo & Orange Money payouts",
+  "Real-time sales analytics",
+  "Custom storefront & store URL",
+  "No monthly fees, ever",
+];
 
-function CheckIcon({ highlight }: { highlight: boolean }) {
+function CheckIcon() {
   return (
-    <svg
-      className={`w-4 h-4 shrink-0 ${highlight ? 'text-violet-200' : 'text-violet-600'}`}
-      fill="none"
-      viewBox="0 0 16 16"
-    >
+    <svg className="w-4 h-4 shrink-0 text-violet-200" fill="none" viewBox="0 0 16 16">
       <path
         d="M3 8L6.5 11.5L13 4.5"
         stroke="currentColor"
@@ -73,116 +26,102 @@ function CheckIcon({ highlight }: { highlight: boolean }) {
 }
 
 export default function PricingSection() {
-  const [yearly, setYearly] = useState(false);
+  const keepRate = 100 - COMMISSION_RATE;
+  const example = 20000;
+  const earn = Math.round((example * keepRate) / 100);
 
   return (
     <section id="pricing" className="py-24 bg-zinc-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold tracking-tight text-zinc-900 mb-4">
-            Simple, transparent pricing
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-14">
+          <span className="inline-flex items-center gap-2 rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-violet-600">
+            No subscriptions
+          </span>
+          <h2 className="mt-5 text-4xl font-bold tracking-tight text-zinc-900 mb-4">
+            Free to start. We only earn when you do.
           </h2>
-          <p className="text-lg text-zinc-600 max-w-2xl mx-auto mb-10">
-            Start for free. Scale as you grow. No hidden fees, no surprises.
+          <p className="text-lg text-zinc-600 max-w-2xl mx-auto">
+            Forget monthly plans. Chichi takes a flat commission on each sale of your
+            digital products — that&apos;s it. List for free and keep the rest.
           </p>
-
-          {/* Toggle */}
-          <div className="inline-flex items-center gap-1 bg-white border border-zinc-200 rounded-full p-1 shadow-sm">
-            <button
-              onClick={() => setYearly(false)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
-                !yearly ? 'bg-zinc-900 text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-900'
-              }`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setYearly(true)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-                yearly ? 'bg-zinc-900 text-white shadow-sm' : 'text-zinc-500 hover:text-zinc-900'
-              }`}
-            >
-              Yearly
-              <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">
-                –20%
-              </span>
-            </button>
-          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto items-start">
-          {plans.map((plan) => (
-            <div
-              key={plan.name}
-              className={`relative rounded-2xl p-8 ${
-                plan.highlight
-                  ? 'bg-violet-600 ring-2 ring-violet-600 shadow-2xl shadow-violet-200 text-white'
-                  : 'bg-white border border-zinc-200 shadow-sm'
-              }`}
-            >
-              {plan.highlight && (
-                <div className="absolute -top-4 inset-x-0 flex justify-center">
-                  <span className="bg-violet-100 text-violet-700 text-xs font-semibold px-3 py-1 rounded-full border border-violet-200">
-                    Most popular
-                  </span>
-                </div>
-              )}
-
-              <div className="mb-8">
-                <h3
-                  className={`text-base font-semibold mb-1 ${
-                    plan.highlight ? 'text-white' : 'text-zinc-900'
-                  }`}
-                >
-                  {plan.name}
-                </h3>
-                <p className={`text-sm mb-6 ${plan.highlight ? 'text-violet-200' : 'text-zinc-500'}`}>
-                  {plan.description}
-                </p>
-                <div className="flex items-end gap-1">
-                  <span
-                    className={`text-5xl font-bold tracking-tight ${
-                      plan.highlight ? 'text-white' : 'text-zinc-900'
-                    }`}
-                  >
-                    {plan.monthly === 0 ? "Free" : `XAF ${(yearly ? plan.yearly : plan.monthly).toLocaleString()}`}
-                  </span>
-                  {plan.monthly > 0 && (
-                    <span className={`text-sm mb-2 ${plan.highlight ? 'text-violet-200' : 'text-zinc-400'}`}>
-                      /mo
-                    </span>
-                  )}
-                </div>
-                {yearly && plan.monthly > 0 && (
-                  <p className={`text-xs mt-1 ${plan.highlight ? 'text-violet-300' : 'text-zinc-400'}`}>
-                    Billed XAF {(plan.yearly * 12).toLocaleString()}/year
-                  </p>
-                )}
-              </div>
-
-              <a
-                href="#"
-                className={`block w-full text-center py-3 rounded-xl text-sm font-semibold mb-8 transition-colors ${
-                  plan.highlight
-                    ? 'bg-white text-violet-700 hover:bg-violet-50'
-                    : 'bg-violet-600 text-white hover:bg-violet-700'
-                }`}
-              >
-                {plan.cta}
-              </a>
-
-              <ul className="space-y-3">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-3">
-                    <CheckIcon highlight={plan.highlight} />
-                    <span className={`text-sm ${plan.highlight ? 'text-violet-100' : 'text-zinc-600'}`}>
-                      {feature}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 items-stretch">
+          {/* Commission card */}
+          <div className="relative rounded-2xl bg-violet-600 p-8 text-white shadow-2xl shadow-violet-200 flex flex-col">
+            <div className="absolute -top-4 inset-x-0 flex justify-center">
+              <span className="rounded-full border border-violet-200 bg-violet-100 px-3 py-1 text-xs font-semibold text-violet-700">
+                For creators
+              </span>
             </div>
-          ))}
+            <div className="flex items-end gap-2">
+              <span className="text-6xl font-bold tracking-tight">{COMMISSION_RATE}%</span>
+              <span className="mb-2 text-sm text-violet-200">per sale</span>
+            </div>
+            <p className="mt-2 text-sm text-violet-100">
+              No setup fees. No monthly fees. You keep{" "}
+              <strong className="text-white">{keepRate}%</strong> of every sale.
+            </p>
+
+            <ul className="mt-8 space-y-3">
+              {included.map((feature) => (
+                <li key={feature} className="flex items-center gap-3">
+                  <CheckIcon />
+                  <span className="text-sm text-violet-100">{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              href="/register?role=creator"
+              className="mt-8 block w-full rounded-xl bg-white py-3 text-center text-sm font-semibold text-violet-700 transition-colors hover:bg-violet-50"
+            >
+              Start selling free
+            </Link>
+          </div>
+
+          {/* Example + buyer note */}
+          <div className="flex flex-col gap-8">
+            <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
+              <h3 className="text-base font-semibold text-zinc-900">How a sale breaks down</h3>
+              <p className="mt-1 text-sm text-zinc-500">
+                Example: a product priced at XAF {example.toLocaleString()}.
+              </p>
+              <dl className="mt-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <dt className="text-sm text-zinc-500">Sale price</dt>
+                  <dd className="text-sm font-semibold text-zinc-900">XAF {example.toLocaleString()}</dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="text-sm text-zinc-500">Chichi commission ({COMMISSION_RATE}%)</dt>
+                  <dd className="text-sm font-semibold text-rose-600">
+                    − XAF {(example - earn).toLocaleString()}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between border-t border-zinc-100 pt-4">
+                  <dt className="text-sm font-semibold text-zinc-900">You receive</dt>
+                  <dd className="text-lg font-bold text-emerald-600">XAF {earn.toLocaleString()}</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
+              <h3 className="text-base font-semibold text-zinc-900">Buying is always free</h3>
+              <p className="mt-1 text-sm text-zinc-500">
+                Members pay only for the products they buy — no account or membership fees.
+                Pay securely with MTN MoMo or Orange Money.
+              </p>
+              <Link
+                href="/register?role=buyer"
+                className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-violet-600 hover:text-violet-700"
+              >
+                Browse the marketplace
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 16 16" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 8h10M9 4l4 4-4 4" />
+                </svg>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>

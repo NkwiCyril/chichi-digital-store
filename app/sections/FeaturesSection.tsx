@@ -25,9 +25,9 @@ const features = [
     ),
   },
   {
-    title: "Zero Platform Fees",
+    title: "Pay Only When You Sell",
     description:
-      "Keep 100% of every sale on Pro and Business plans. No surprise deductions at payout time.",
+      "No monthly fees and no setup costs. Chichi takes a small commission per sale — you keep the rest.",
     icon: (
       <path
         strokeLinecap="round"
@@ -50,9 +50,9 @@ const features = [
     ),
   },
   {
-    title: "Global Payments",
+    title: "Mobile Money Payments",
     description:
-      "Accept payments from 150+ countries in dozens of currencies via Stripe — no setup required.",
+      "Accept MTN Mobile Money and Orange Money out of the box — the way Cameroon pays. No setup required.",
     icon: (
       <path
         strokeLinecap="round"

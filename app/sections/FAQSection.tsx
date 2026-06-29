@@ -8,12 +8,12 @@ const faqs = [
     a: "Chichi automatically delivers your digital files to customers immediately after purchase. Files are stored securely on our CDN and customers receive a personalised download link via email — no manual steps needed.",
   },
   {
-    q: "Are there any transaction fees?",
-    a: "On the Free plan, we charge a 5% platform fee. On Pro and Business plans, there are zero platform fees — you keep 100% of every sale. Standard payment processor fees (e.g. Stripe) still apply.",
+    q: "How much does Chichi cost?",
+    a: "There are no subscriptions or monthly fees. Listing products is free — Chichi simply takes a flat 10% commission on each sale of your digital products. You keep 90% of every sale.",
   },
   {
-    q: "Can I use my own custom domain?",
-    a: "Yes! Pro and Business plan users can connect a custom domain to their storefront. Setup takes just a few minutes with our guided DNS wizard.",
+    q: "Can I use my own custom store URL?",
+    a: "Yes! Every creator gets a custom store URL (store.chichi.co/your-store) during onboarding, and you can update it any time from your dashboard.",
   },
   {
     q: "What types of digital products can I sell?",
@@ -21,11 +21,11 @@ const faqs = [
   },
   {
     q: "How and when do I get paid?",
-    a: "We integrate with Stripe for payment processing. Payouts are sent directly to your bank account on a weekly basis, with no minimum threshold.",
+    a: "Buyers pay with MTN Mobile Money or Orange Money. Your earnings — minus the 10% commission — are paid out to the Mobile Money number you set during creator onboarding.",
   },
   {
     q: "Can I offer discount codes and run sales?",
-    a: "Yes! You can create percentage or fixed-amount discount codes, schedule limited-time flash sales, and bundle products together on all plans.",
+    a: "Yes! You can create percentage or fixed-amount discount codes, schedule limited-time flash sales, and bundle products together — at no extra cost.",
   },
 ] as const;
 
