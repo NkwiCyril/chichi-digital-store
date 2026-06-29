@@ -146,7 +146,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-violet-600 hover:bg-violet-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold py-3 shadow-lg shadow-violet-200/60 transition-colors"
+              className="w-full inline-flex justify-center cursor-pointer items-center gap-2 rounded-xl bg-violet-600 hover:bg-violet-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold py-3 shadow-lg shadow-violet-200/60 transition-colors"
             >
               {isPending ? "Signing in..." : "Continue"}
             </button>
@@ -161,7 +161,7 @@ export default function LoginPage() {
               type="button"
               onClick={handleGoogleSignIn}
               disabled={isPending}
-              className="w-full inline-flex justify-center items-center gap-3 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-sm font-semibold text-zinc-700 py-3 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full inline-flex justify-center items-center cursor-pointer gap-3 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-sm font-semibold text-zinc-700 py-3 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <svg className="w-4 h-4" viewBox="0 0 533.5 544.3">
                 <path
@@ -197,10 +197,10 @@ export default function LoginPage() {
       <div className="relative hidden lg:block">
         <div className="absolute inset-0 bg-linear-to-br from-violet-500 via-violet-600 to-indigo-700" />
         <Image
-          src="/globe.svg"
+          src="/images/login-side-image.jpg"
           alt="Floating globe illustration"
           fill
-          className="object-contain p-24"
+          className="object-cover"
           priority
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/30 to-transparent" />

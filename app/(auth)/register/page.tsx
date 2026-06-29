@@ -198,7 +198,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-violet-600 hover:bg-violet-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold py-3 shadow-lg shadow-violet-200/60 transition-colors"
+              className="w-full inline-flex justify-center items-center cursor-pointer gap-2 rounded-xl bg-violet-600 hover:bg-violet-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold py-3 shadow-lg shadow-violet-200/60 transition-colors"
             >
               {isPending ? "Creating account..." : "Create account"}
             </button>
@@ -213,7 +213,7 @@ export default function RegisterPage() {
               type="button"
               onClick={handleGoogleSignUp}
               disabled={isPending}
-              className="w-full inline-flex justify-center items-center gap-3 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-sm font-semibold text-zinc-700 py-3 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full inline-flex justify-center items-center cursor-pointer gap-3 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-sm font-semibold text-zinc-700 py-3 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <svg className="w-4 h-4" viewBox="0 0 533.5 544.3">
                 <path fill="#4285f4" d="M533.5 278.4c0-17.4-1.5-34-4.3-50.2H272.1v95h146.9c-6.3 34.1-25.3 62.9-54.1 82.2l87.3 67.7c50.9-46.9 81.3-116 81.3-194.7z" />
@@ -240,10 +240,10 @@ export default function RegisterPage() {
       <div className="relative hidden lg:block">
         <div className="absolute inset-0 bg-linear-to-br from-violet-500 via-violet-600 to-indigo-700" />
         <Image
-          src="/globe.svg"
+          src="/images/register-side-image.jpg"
           alt="Floating globe illustration"
           fill
-          className="object-contain p-24"
+          className="object-cover"
           priority
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/30 to-transparent" />
