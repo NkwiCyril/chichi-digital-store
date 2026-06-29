@@ -1,3 +1,4 @@
+import BlogSection from "./sections/BlogSection";
 import CTASection from "./sections/CTASection";
 import FAQSection from "./sections/FAQSection";
 import FeaturesSection from "./sections/FeaturesSection";
@@ -21,6 +22,7 @@ export default function Home() {
         <PricingSection />
         <TestimonialsSection />
         <FAQSection />
+        <BlogSection />
         <CTASection />
       </main>
       <Footer />

@@ -1,27 +1,27 @@
 export default function HeroSection() {
   const products = [
     {
-      name: "UI Design Kit Pro",
+      name: "Packaging Design Kit Pro",
       cat: "Design Templates",
-      price: "$49",
+      price: "XAF 29,000",
       gradient: "from-violet-400 to-purple-600",
     },
     {
-      name: "Icon Library 2.0",
+      name: "Brand Library 2.0",
       cat: "Digital Assets",
-      price: "$29",
+      price: "XAF 18,000",
       gradient: "from-blue-400 to-indigo-600",
     },
     {
-      name: "Brand Starter Kit",
+      name: "Branding Starter Kit",
       cat: "Templates",
-      price: "$39",
+      price: "XAF 24,000",
       gradient: "from-rose-400 to-pink-600",
     },
     {
-      name: "Motion UI Pack",
-      cat: "Animations",
-      price: "$59",
+      name: "Package Designer - Beginner to Pro",
+      cat: "Course",
+      price: "XAF 35,000",
       gradient: "from-amber-400 to-orange-500",
     },
   ] as const;
@@ -42,7 +42,7 @@ export default function HeroSection() {
             <div className="inline-flex items-center gap-2 bg-violet-50 border border-violet-200 rounded-full px-3 py-1.5 mb-8">
               <span className="w-1.5 h-1.5 rounded-full bg-violet-500" />
               <span className="text-xs font-medium text-violet-700">
-                50,000+ creators worldwide
+                Growing creator community in Cameroon
               </span>
             </div>
 
@@ -88,7 +88,7 @@ export default function HeroSection() {
             </div>
 
             <p className="text-xs text-zinc-400 tracking-wide">
-              No credit card required · Set up in 2 minutes · Cancel anytime
+              No credit card required · Set up in 2 minutes · Pay via MTN MoMo or Orange Money
             </p>
           </div>
 
@@ -117,7 +117,7 @@ export default function HeroSection() {
                     />
                   </svg>
                   <span className="text-xs text-zinc-400">
-                    store.chichi.co/sarah
+                    store.chichi.co/mukstyle
                   </span>
                 </div>
               </div>
@@ -128,10 +128,10 @@ export default function HeroSection() {
                   <div className="w-10 h-10 rounded-full bg-linear-to-br from-violet-400 to-purple-600 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-zinc-900">
-                      Sarah&apos;s Digital Shop
+                      Mukstyle&apos;s Digital Shop
                     </p>
                     <p className="text-xs text-zinc-400">
-                      Design resources &amp; templates
+                      Packaging courses &amp; resources
                     </p>
                   </div>
                 </div>
@@ -163,7 +163,7 @@ export default function HeroSection() {
 
                 <div className="mt-4 pt-4 border-t border-zinc-100 flex gap-6">
                   {[
-                    ["$12,430", "Total earnings"],
+                    ["XAF 7,450,000", "Total earnings"],
                     ["847", "Total sales"],
                     ["4.9★", "Avg rating"],
                   ].map(([value, label]) => (

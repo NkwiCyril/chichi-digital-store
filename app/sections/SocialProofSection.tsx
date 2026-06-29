@@ -1,4 +1,4 @@
-const brands = ["Dribbble", "Behance", "Gumroad", "Notion", "Figma", "Framer"] as const;
+const brands = ["Invollv", "Cyrix Tech", "Mukstule Studio", "G2G Entertainment"] as const;
 
 export default function SocialProofSection() {
   return (

@@ -1,27 +1,27 @@
 const testimonials = [
   {
-    initials: "SC",
-    name: "Sarah Chen",
-    role: "UI Designer, Freelance",
+    initials: "AN",
+    name: "Amara Njike",
+    role: "Graphic Designer, Douala",
     gradient: "from-violet-400 to-purple-600",
     quote:
-      "I switched from Gumroad to Chichi six months ago and haven't looked back. The storefront builder is gorgeous and setting up my custom domain took literally five minutes.",
+      "Since I started using Chichi, I've been selling my design kits across Cameroon. The storefront is beautiful and MTN MoMo payments make it so easy for my clients.",
   },
   {
-    initials: "MR",
-    name: "Marcus Rodriguez",
-    role: "Indie Developer",
+    initials: "BF",
+    name: "Bertrand Fomba",
+    role: "Indie Developer, Yaoundé",
     gradient: "from-blue-400 to-indigo-600",
     quote:
-      "The zero-fee Pro plan pays for itself after just two sales. I'm selling software licences and the automated delivery with Stripe integration is seamless.",
+      "The Pro plan pays for itself after just two sales. I sell web templates and automated delivery works perfectly. Orange Money has made local payments seamless.",
   },
   {
-    initials: "ET",
-    name: "Emma Thompson",
-    role: "Online Educator",
+    initials: "CN",
+    name: "Célestine Ngo Biyong",
+    role: "Online Educator, Bafoussam",
     gradient: "from-rose-400 to-pink-600",
     quote:
-      "My revenue grew 3× after moving to Chichi. The analytics dashboard showed me exactly which products were converting and helped me optimise my pricing.",
+      "My revenue tripled since I started selling courses on Chichi. The analytics dashboard showed me exactly which products convert best in Cameroon.",
   },
 ] as const;
 
@@ -43,7 +43,7 @@ export default function TestimonialsSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold tracking-tight text-zinc-900 mb-4">
-            Loved by creators worldwide
+            Loved by Cameroonian creators
           </h2>
           <p className="text-lg text-zinc-500">Don't just take our word for it.</p>
         </div>

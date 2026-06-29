@@ -7,10 +7,10 @@ export default function CTASection() {
       </div>
       <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
         <h2 className="text-4xl font-bold text-white mb-4 tracking-tight">
-          Ready to start selling?
+          Ready to start selling in Cameroon?
         </h2>
         <p className="text-xl text-violet-200 mb-10">
-          Join 50,000+ creators who earn with Chichi. Free to get started.
+          Be among the first Cameroonian creators on Chichi. Accept MTN MoMo & Orange Money from day one.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
@@ -26,7 +26,7 @@ export default function CTASection() {
             Talk to sales
           </a>
         </div>
-        <p className="mt-8 text-sm text-violet-300">No credit card required</p>
+        <p className="mt-8 text-sm text-violet-300">No credit card required · MTN MoMo &amp; Orange Money supported</p>
       </div>
     </section>
   );

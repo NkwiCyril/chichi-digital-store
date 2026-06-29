@@ -20,8 +20,8 @@ const plans = [
   },
   {
     name: "Pro",
-    monthly: 29,
-    yearly: 23,
+    monthly: 15000,
+    yearly: 12000,
     description: "For serious creators",
     features: [
       "Unlimited products",
@@ -37,8 +37,8 @@ const plans = [
   },
   {
     name: "Business",
-    monthly: 79,
-    yearly: 63,
+    monthly: 45000,
+    yearly: 36000,
     description: "For teams and agencies",
     features: [
       "Everything in Pro",
@@ -145,15 +145,17 @@ export default function PricingSection() {
                       plan.highlight ? 'text-white' : 'text-zinc-900'
                     }`}
                   >
-                    ${yearly ? plan.yearly : plan.monthly}
+                    {plan.monthly === 0 ? "Free" : `XAF ${(yearly ? plan.yearly : plan.monthly).toLocaleString()}`}
                   </span>
-                  <span className={`text-sm mb-2 ${plan.highlight ? 'text-violet-200' : 'text-zinc-400'}`}>
-                    /mo
-                  </span>
+                  {plan.monthly > 0 && (
+                    <span className={`text-sm mb-2 ${plan.highlight ? 'text-violet-200' : 'text-zinc-400'}`}>
+                      /mo
+                    </span>
+                  )}
                 </div>
                 {yearly && plan.monthly > 0 && (
                   <p className={`text-xs mt-1 ${plan.highlight ? 'text-violet-300' : 'text-zinc-400'}`}>
-                    Billed ${(plan.yearly * 12).toLocaleString()}/year
+                    Billed XAF {(plan.yearly * 12).toLocaleString()}/year
                   </p>
                 )}
               </div>

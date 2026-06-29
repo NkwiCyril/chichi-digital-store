@@ -21,7 +21,7 @@ export default function Footer() {
               <span className="text-sm font-semibold text-white">Chichi</span>
             </div>
             <p className="text-sm text-zinc-500 leading-relaxed">
-              The simplest way for creators to sell digital products online.
+              The platform for Cameroonian creators to sell digital products. MTN MoMo &amp; Orange Money accepted.
             </p>
           </div>
 
