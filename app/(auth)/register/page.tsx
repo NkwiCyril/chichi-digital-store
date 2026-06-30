@@ -20,7 +20,15 @@ export default function RegisterPage() {
   const [status, setStatus] = useState<Status>(null);
   const [isPending, startTransition] = useTransition();
 
-  const nextPath = searchParams.get("next") ?? "/";
+  const nextPath = searchParams.get("next") ?? "";
+  const intent: "creator" | "buyer" =
+    searchParams.get("role") === "creator" ? "creator" : "buyer";
+
+  const onboardingPath = useMemo(() => {
+    const params = new URLSearchParams({ role: intent });
+    if (nextPath) params.set("next", nextPath);
+    return `/onboarding?${params.toString()}`;
+  }, [intent, nextPath]);
 
   const callbackUrl = useMemo(() => {
     if (typeof window === "undefined") {
@@ -28,11 +36,9 @@ export default function RegisterPage() {
     }
 
     const url = new URL("/auth/callback", window.location.origin);
-    if (nextPath) {
-      url.searchParams.set("next", nextPath);
-    }
+    url.searchParams.set("next", onboardingPath);
     return url.toString();
-  }, [nextPath]);
+  }, [onboardingPath]);
 
   useEffect(() => {
     const errorMessage = searchParams.get("message");
@@ -50,12 +56,21 @@ export default function RegisterPage() {
 
     startTransition(async () => {
       setStatus(null);
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: { full_name: fullName },
-          emailRedirectTo: typeof window !== "undefined" ? `${window.location.origin}/auth/callback` : undefined,
+          data: {
+            full_name: fullName,
+            display_name: fullName,
+            roles: ["buyer"],
+            active_role: "buyer",
+            signup_intent: intent,
+            onboarding_complete: false,
+            creator_onboarding_complete: false,
+          },
+          emailRedirectTo:
+            typeof window !== "undefined" ? callbackUrl ?? undefined : undefined,
         },
       });
 
@@ -64,11 +79,16 @@ export default function RegisterPage() {
         return;
       }
 
-      setStatus({
-        type: "success",
-        message: "Account created! Check your email to confirm and continue.",
-      });
-      router.push(nextPath);
+      // When email confirmation is required, Supabase returns no session.
+      if (!data.session) {
+        setStatus({
+          type: "success",
+          message: "Account created! Check your email to confirm and continue.",
+        });
+        return;
+      }
+
+      router.push(onboardingPath);
       router.refresh();
     });
   };
@@ -97,12 +117,14 @@ export default function RegisterPage() {
         <div className="mx-auto w-full max-w-md space-y-10">
           <header className="space-y-3">
             <p className="inline-flex items-center gap-2 rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-violet-600">
-              Start selling
+              {intent === "creator" ? "Start selling" : "Join the marketplace"}
             </p>
             <div className="space-y-2">
               <h1 className="text-3xl font-bold text-zinc-900">Create your Chichi account</h1>
               <p className="text-sm text-zinc-500">
-                Launch your digital storefront in minutes with built-in Supabase authentication.
+                {intent === "creator"
+                  ? "Launch your digital storefront and start earning in minutes."
+                  : "Discover and buy digital products from Cameroonian creators."}
               </p>
             </div>
           </header>

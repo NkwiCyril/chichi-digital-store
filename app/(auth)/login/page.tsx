@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useState, useTransition } from "react";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { profileFromMetadata, resolvePostAuthPath } from "@/lib/auth/roles";
 
 type Status = { type: "success" | "error"; message: string } | null;
 
@@ -18,7 +19,7 @@ export default function LoginPage() {
   const [status, setStatus] = useState<Status>(null);
   const [isPending, startTransition] = useTransition();
 
-  const nextPath = searchParams.get("next") ?? "/";
+  const nextPath = searchParams.get("next") ?? "";
 
   const callbackUrl = useMemo(() => {
     if (typeof window === "undefined") {
@@ -26,9 +27,7 @@ export default function LoginPage() {
     }
 
     const url = new URL("/auth/callback", window.location.origin);
-    if (nextPath) {
-      url.searchParams.set("next", nextPath);
-    }
+    url.searchParams.set("next", nextPath || "/dashboard");
     return url.toString();
   }, [nextPath]);
 
@@ -52,7 +51,15 @@ export default function LoginPage() {
       }
 
       setStatus({ type: "success", message: "Welcome back! Redirecting to your dashboard..." });
-      router.push(nextPath);
+
+      const { data: userData } = await supabase.auth.getUser();
+      const profile = profileFromMetadata(userData.user?.user_metadata);
+      const dest =
+        profile.onboardingComplete && nextPath
+          ? nextPath
+          : resolvePostAuthPath(profile);
+
+      router.push(dest);
       router.refresh();
     });
   };
