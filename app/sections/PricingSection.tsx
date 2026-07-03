@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BRAND_NAME } from "@/lib/brand";
 
 const COMMISSION_RATE = 10; // percent per sale
 
@@ -41,7 +42,7 @@ export default function PricingSection() {
             Free to start. We only earn when you do.
           </h2>
           <p className="text-lg text-zinc-600 max-w-2xl mx-auto">
-            Forget monthly plans. Chichi takes a flat commission on each sale of your
+            Forget monthly plans. {BRAND_NAME} takes a flat commission on each sale of your
             digital products — that&apos;s it. List for free and keep the rest.
           </p>
         </div>
@@ -93,7 +94,7 @@ export default function PricingSection() {
                   <dd className="text-sm font-semibold text-zinc-900">XAF {example.toLocaleString()}</dd>
                 </div>
                 <div className="flex items-center justify-between">
-                  <dt className="text-sm text-zinc-500">Chichi commission ({COMMISSION_RATE}%)</dt>
+                  <dt className="text-sm text-zinc-500">{BRAND_NAME} commission ({COMMISSION_RATE}%)</dt>
                   <dd className="text-sm font-semibold text-rose-600">
                     − XAF {(example - earn).toLocaleString()}
                   </dd>

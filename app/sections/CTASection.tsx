@@ -1,3 +1,5 @@
+import { BRAND_NAME } from "@/lib/brand";
+
 export default function CTASection() {
   return (
     <section className="py-24 bg-violet-600 relative overflow-hidden">
@@ -10,7 +12,7 @@ export default function CTASection() {
           Ready to start selling in Cameroon?
         </h2>
         <p className="text-xl text-violet-200 mb-10">
-          Be among the first Cameroonian creators on Chichi. Accept MTN MoMo & Orange Money from day one.
+          Be among the first Cameroonian creators on {BRAND_NAME}. Accept MTN MoMo & Orange Money from day one.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a

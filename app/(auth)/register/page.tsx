@@ -3,13 +3,22 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useEffect, useMemo, useState, useTransition } from "react";
+import { FormEvent, Suspense, useEffect, useMemo, useState, useTransition } from "react";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { BRAND_NAME } from "@/lib/brand";
 
 type Status = { type: "success" | "error"; message: string } | null;
 
 export default function RegisterPage() {
+  return (
+    <Suspense>
+      <RegisterContent />
+    </Suspense>
+  );
+}
+
+function RegisterContent() {
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const searchParams = useSearchParams();
@@ -120,7 +129,7 @@ export default function RegisterPage() {
               {intent === "creator" ? "Start selling" : "Join the marketplace"}
             </p>
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold text-zinc-900">Create your Chichi account</h1>
+              <h1 className="text-3xl font-bold text-zinc-900">Create your {BRAND_NAME} account</h1>
               <p className="text-sm text-zinc-500">
                 {intent === "creator"
                   ? "Launch your digital storefront and start earning in minutes."
@@ -279,7 +288,7 @@ export default function RegisterPage() {
             </h2>
           </div>
           <p className="text-sm text-white/70">
-            Chichi handles checkout, analytics, and fulfilment so you can stay focused on building experiences your audience loves.
+            {BRAND_NAME} handles checkout, analytics, and fulfilment so you can stay focused on building experiences your audience loves.
           </p>
         </div>
       </div>

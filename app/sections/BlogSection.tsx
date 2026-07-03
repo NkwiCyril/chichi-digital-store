@@ -1,11 +1,13 @@
+import { BRAND_NAME } from "@/lib/brand";
+
 const posts = [
   {
     tag: "Guide",
     tagColor: "text-violet-600 bg-violet-50",
-    title: "How to sell your designs in Cameroon with Chichi",
+    title: `How to sell your designs in Cameroon with ${BRAND_NAME}`,
     excerpt:
       "A complete guide for Cameroonian creators: from setting up your storefront to receiving your first payment via MTN MoMo or Orange Money.",
-    author: "Chichi Team",
+    author: `${BRAND_NAME} Team`,
     date: "June 20, 2025",
     readTime: "5 min",
     gradient: "from-violet-400 to-purple-600",
@@ -15,8 +17,8 @@ const posts = [
     tagColor: "text-emerald-600 bg-emerald-50",
     title: "MTN MoMo & Orange Money: Local payments from day one",
     excerpt:
-      "Chichi is the first digital product sales platform to natively accept Cameroon's two major Mobile Money providers from launch.",
-    author: "Chichi Team",
+      `${BRAND_NAME} is the first digital product sales platform to natively accept Cameroon's two major Mobile Money providers from launch.`,
+    author: `${BRAND_NAME} Team`,
     date: "June 15, 2025",
     readTime: "3 min",
     gradient: "from-emerald-400 to-teal-600",
@@ -32,7 +34,7 @@ const posts = [
     readTime: "4 min",
     gradient: "from-amber-400 to-orange-500",
   },
-] as const;
+];
 
 export default function BlogSection() {
   return (

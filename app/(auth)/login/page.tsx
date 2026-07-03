@@ -3,14 +3,23 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useEffect, useMemo, useState, useTransition } from "react";
+import { FormEvent, Suspense, useEffect, useMemo, useState, useTransition } from "react";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { profileFromMetadata, resolvePostAuthPath } from "@/lib/auth/roles";
+import { BRAND_NAME } from "@/lib/brand";
 
 type Status = { type: "success" | "error"; message: string } | null;
 
 export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginContent />
+    </Suspense>
+  );
+}
+
+function LoginContent() {
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const searchParams = useSearchParams();
@@ -91,7 +100,7 @@ export default function LoginPage() {
               Welcome back
             </p>
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold text-zinc-900">Sign in to Chichi</h1>
+              <h1 className="text-3xl font-bold text-zinc-900">Sign in to {BRAND_NAME}</h1>
               <p className="text-sm text-zinc-500">
                 Continue to your creator dashboard and keep earning.
               </p>
@@ -221,7 +230,7 @@ export default function LoginPage() {
             </h2>
           </div>
           <p className="text-sm text-white/70">
-            Join thousands of designers, writers, and developers monetising their knowledge with Chichi.
+            Join thousands of designers, writers, and developers monetising their knowledge with {BRAND_NAME}.
           </p>
         </div>
       </div>

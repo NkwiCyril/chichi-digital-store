@@ -5,6 +5,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { UserProfile } from "@/lib/auth/roles";
 import { persistProfile } from "@/lib/db/profile";
+import { BRAND_NAME } from "@/lib/brand";
 import {
   AvatarUploadField,
   ErrorBanner,
@@ -57,7 +58,7 @@ export default function BuyerOnboarding({
   return (
     <div>
       <div className="mb-6 space-y-1">
-        <h1 className="text-2xl font-bold text-zinc-900">Welcome to Chichi</h1>
+        <h1 className="text-2xl font-bold text-zinc-900">Welcome to {BRAND_NAME}</h1>
         <p className="text-sm text-zinc-500">
           Add a name and photo so creators know who you are. You can skip this for now.
         </p>

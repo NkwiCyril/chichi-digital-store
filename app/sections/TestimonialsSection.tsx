@@ -1,3 +1,5 @@
+import { BRAND_NAME } from "@/lib/brand";
+
 const testimonials = [
   {
     initials: "AN",
@@ -5,7 +7,7 @@ const testimonials = [
     role: "Graphic Designer, Douala",
     gradient: "from-violet-400 to-purple-600",
     quote:
-      "Since I started using Chichi, I've been selling my design kits across Cameroon. The storefront is beautiful and MTN MoMo payments make it so easy for my clients.",
+      `Since I started using ${BRAND_NAME}, I've been selling my design kits across Cameroon. The storefront is beautiful and MTN MoMo payments make it so easy for my clients.`,
   },
   {
     initials: "BF",
@@ -21,9 +23,9 @@ const testimonials = [
     role: "Online Educator, Bafoussam",
     gradient: "from-rose-400 to-pink-600",
     quote:
-      "My revenue tripled since I started selling courses on Chichi. The analytics dashboard showed me exactly which products convert best in Cameroon.",
+      `My revenue tripled since I started selling courses on ${BRAND_NAME}. The analytics dashboard showed me exactly which products convert best in Cameroon.`,
   },
-] as const;
+];
 
 function Stars() {
   return (

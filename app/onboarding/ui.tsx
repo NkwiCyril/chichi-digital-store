@@ -4,6 +4,7 @@ import { ReactNode, useRef, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { ACCEPTED_AVATAR_TYPES, uploadAvatar } from "@/lib/supabase/storage";
+import { BRAND_NAME } from "@/lib/brand";
 
 export function OnboardingShell({ children }: { children: ReactNode }) {
   return (
@@ -14,7 +15,7 @@ export function OnboardingShell({ children }: { children: ReactNode }) {
             <path d="M8 1L15 4.5V11.5L8 15L1 11.5V4.5L8 1Z" />
           </svg>
         </div>
-        <span className="text-lg font-semibold text-zinc-900 tracking-tight">Chichi</span>
+        <span className="text-lg font-semibold text-zinc-900 tracking-tight">{BRAND_NAME}</span>
       </div>
       {children}
     </div>

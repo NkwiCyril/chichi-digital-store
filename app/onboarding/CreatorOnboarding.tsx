@@ -13,6 +13,7 @@ import {
   type UserProfile,
 } from "@/lib/auth/roles";
 import { persistProfile, type ProfilePersistPayload } from "@/lib/db/profile";
+import { BRAND_NAME, storeHost } from "@/lib/brand";
 import {
   AvatarUploadField,
   ErrorBanner,
@@ -160,7 +161,7 @@ export default function CreatorOnboarding({
 
   const titles = [
     { title: "Set up your profile", subtitle: "Tell buyers who you are." },
-    { title: "Create your store", subtitle: "This is your public storefront on Chichi." },
+    { title: "Create your store", subtitle: `This is your public storefront on ${BRAND_NAME}.` },
     { title: "Get paid", subtitle: "Where should we send your earnings?" },
   ];
 
@@ -233,7 +234,7 @@ export default function CreatorOnboarding({
                 update({ storeSlug: slugify(v) });
               }}
               placeholder="mukstyle"
-              prefix="store.chichi.co/"
+              prefix={`${storeHost()}/`}
             />
           </Field>
           <Field id="category" label="Category" error={errors.category}>
@@ -261,7 +262,7 @@ export default function CreatorOnboarding({
             id="payoutNumber"
             label="Mobile Money number"
             error={errors.payoutNumber}
-            hint="Earnings are paid out here, minus the Chichi commission."
+            hint={`Earnings are paid out here, minus the ${BRAND_NAME} commission.`}
           >
             <TextField
               id="payoutNumber"

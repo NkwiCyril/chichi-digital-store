@@ -1,3 +1,5 @@
+import { BRAND_NAME } from "@/lib/brand";
+
 const features = [
   {
     title: "Instant Delivery",
@@ -27,7 +29,7 @@ const features = [
   {
     title: "Pay Only When You Sell",
     description:
-      "No monthly fees and no setup costs. Chichi takes a small commission per sale — you keep the rest.",
+      `No monthly fees and no setup costs. ${BRAND_NAME} takes a small commission per sale — you keep the rest.`,
     icon: (
       <path
         strokeLinecap="round"
@@ -84,7 +86,7 @@ export default function FeaturesSection() {
             Everything you need to sell online
           </h2>
           <p className="text-lg text-zinc-500">
-            Chichi packs all the tools a creator needs into one beautiful,
+            {BRAND_NAME} packs all the tools a creator needs into one beautiful,
             easy-to-use platform.
           </p>
         </div>

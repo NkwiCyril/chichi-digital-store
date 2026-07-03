@@ -1,36 +1,37 @@
 'use client';
 
-import { useState } from "react";
-
-const faqs = [
-  {
-    q: "How does Chichi handle digital file delivery?",
-    a: "Chichi automatically delivers your digital files to customers immediately after purchase. Files are stored securely on our CDN and customers receive a personalised download link via email — no manual steps needed.",
-  },
-  {
-    q: "How much does Chichi cost?",
-    a: "There are no subscriptions or monthly fees. Listing products is free — Chichi simply takes a flat 10% commission on each sale of your digital products. You keep 90% of every sale.",
-  },
-  {
-    q: "Can I use my own custom store URL?",
-    a: "Yes! Every creator gets a custom store URL (store.chichi.co/your-store) during onboarding, and you can update it any time from your dashboard.",
-  },
-  {
-    q: "What types of digital products can I sell?",
-    a: "Any digital product — ebooks, PDFs, software, music, videos, design assets, courses, Notion templates, Figma files, and more. There are no file-type restrictions.",
-  },
-  {
-    q: "How and when do I get paid?",
-    a: "Buyers pay with MTN Mobile Money or Orange Money. Your earnings — minus the 10% commission — are paid out to the Mobile Money number you set during creator onboarding.",
-  },
-  {
-    q: "Can I offer discount codes and run sales?",
-    a: "Yes! You can create percentage or fixed-amount discount codes, schedule limited-time flash sales, and bundle products together — at no extra cost.",
-  },
-] as const;
+import { useMemo, useState } from "react";
+import { BRAND_NAME, storeHost } from "@/lib/brand";
 
 export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const faqs = useMemo(() => [
+    {
+      q: `How does ${BRAND_NAME} handle digital file delivery?`,
+      a: `${BRAND_NAME} automatically delivers your digital files to customers immediately after purchase. Files are stored securely on our CDN and customers receive a personalised download link via email — no manual steps needed.`,
+    },
+    {
+      q: `How much does ${BRAND_NAME} cost?`,
+      a: `There are no subscriptions or monthly fees. Listing products is free — ${BRAND_NAME} simply takes a flat 10% commission on each sale of your digital products. You keep 90% of every sale.`,
+    },
+    {
+      q: "Can I use my own custom store URL?",
+      a: `Yes! Every creator gets a custom store URL (${storeHost()}/your-store) during onboarding, and you can update it any time from your dashboard.`,
+    },
+    {
+      q: "What types of digital products can I sell?",
+      a: "Any digital product — ebooks, PDFs, software, music, videos, design assets, courses, Notion templates, Figma files, and more. There are no file-type restrictions.",
+    },
+    {
+      q: "How and when do I get paid?",
+      a: "Buyers pay with MTN Mobile Money or Orange Money. Your earnings — minus the 10% commission — are paid out to the Mobile Money number you set during creator onboarding.",
+    },
+    {
+      q: "Can I offer discount codes and run sales?",
+      a: "Yes! You can create percentage or fixed-amount discount codes, schedule limited-time flash sales, and bundle products together — at no extra cost.",
+    },
+  ], []);
 
   return (
     <section id="faq" className="py-24 bg-white">
@@ -40,7 +41,7 @@ export default function FAQSection() {
             Frequently asked questions
           </h2>
           <p className="text-lg text-zinc-600">
-            Everything you need to know about Chichi.
+            Everything you need to know about {BRAND_NAME}.
           </p>
         </div>
 

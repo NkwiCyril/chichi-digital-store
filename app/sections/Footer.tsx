@@ -1,3 +1,5 @@
+import { BRAND_NAME } from "@/lib/brand";
+
 const footerLinks: Record<string, string[]> = {
   Product: ["Features", "Pricing", "Changelog", "Roadmap"],
   Company: ["About", "Blog", "Careers", "Press"],
@@ -18,7 +20,7 @@ export default function Footer() {
                   <path d="M8 1L15 4.5V11.5L8 15L1 11.5V4.5L8 1Z" />
                 </svg>
               </div>
-              <span className="text-sm font-semibold text-white">Chichi</span>
+              <span className="text-sm font-semibold text-white">{BRAND_NAME}</span>
             </div>
             <p className="text-sm text-zinc-500 leading-relaxed">
               The platform for Cameroonian creators to sell digital products. MTN MoMo &amp; Orange Money accepted.
@@ -45,7 +47,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-zinc-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-zinc-600">© 2025 Chichi, Inc. All rights reserved.</p>
+          <p className="text-xs text-zinc-600">© 2025 {BRAND_NAME}, Inc. All rights reserved.</p>
           <div className="flex items-center gap-5">
             {["Twitter", "GitHub", "LinkedIn"].map((social) => (
               <a

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { BRAND_NAME } from "@/lib/brand";
 
 const navLinks = [
   ["Features", "#features"],
@@ -40,7 +41,7 @@ export default function Navbar() {
               </svg>
             </div>
             <span className="text-lg font-semibold text-zinc-900 tracking-tight">
-              Chichi
+              {BRAND_NAME}
             </span>
           </Link>
 
