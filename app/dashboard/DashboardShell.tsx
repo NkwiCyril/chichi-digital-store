@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { isCreator, type Role, type UserProfile } from "@/lib/auth/roles";
 import { setActiveRole } from "@/lib/db/profile";
+import { BRAND_NAME } from "@/lib/brand";
 
 interface DashboardShellProps {
   userId: string;
@@ -16,14 +17,14 @@ interface DashboardShellProps {
 }
 
 const creatorNav = [
-  { label: "Overview", href: "/dashboard/creator", icon: "grid" },
-  { label: "Products", href: "/dashboard/creator#products", icon: "box" },
+  { label: "Overview", href: "/dashboard/creator/overview", icon: "grid" },
+  { label: "Courses", href: "/dashboard/creator/courses", icon: "box" },
   { label: "Sales", href: "/dashboard/creator#sales", icon: "chart" },
   { label: "Settings", href: "/dashboard/settings", icon: "cog" },
 ] as const;
 
 const memberNav = [
-  { label: "Overview", href: "/dashboard/member", icon: "grid" },
+  { label: "Overview", href: "/dashboard/member/overview", icon: "grid" },
   { label: "My Library", href: "/dashboard/member#library", icon: "box" },
   { label: "Settings", href: "/dashboard/settings", icon: "cog" },
 ] as const;
@@ -64,7 +65,7 @@ export default function DashboardShell({
   const router = useRouter();
   const pathname = usePathname();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
-  const [profile] = useState(initialProfile);
+  const [profile, setProfile] = useState(initialProfile);
   const [switching, setSwitching] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -75,8 +76,9 @@ export default function DashboardShell({
     if (role === profile.activeRole) return;
     setSwitching(true);
     await setActiveRole(supabase, userId, role);
+    setProfile((p) => ({ ...p, activeRole: role }));
     setSwitching(false);
-    router.push(role === "creator" ? "/dashboard/creator" : "/dashboard/member");
+    router.push(role === "creator" ? "/dashboard/creator/overview" : "/dashboard/member/overview");
     router.refresh();
   };
 
@@ -96,7 +98,7 @@ export default function DashboardShell({
               <path d="M8 1L15 4.5V11.5L8 15L1 11.5V4.5L8 1Z" />
             </svg>
           </div>
-          <span className="text-lg font-semibold text-zinc-900 tracking-tight">Chichi</span>
+          <span className="text-lg font-semibold text-zinc-900 tracking-tight">{BRAND_NAME}</span>
         </div>
 
         {/* Role switcher */}
@@ -132,7 +134,13 @@ export default function DashboardShell({
 
         <nav className="flex-1 space-y-1 px-3">
           {nav.map((item) => {
-            const active = pathname === item.href.split("#")[0];
+            const hasHash = item.href.includes("#");
+            const hrefBase = item.href.split("#")[0];
+            // Hash links (e.g. #sales) are same-page anchors — never highlight them via pathname
+            // For real routes, exact match for the role root, prefix match for sub-pages
+            const active = hasHash
+              ? false
+              : pathname === hrefBase || pathname.startsWith(hrefBase + "/");
             return (
               <Link
                 key={item.label}
@@ -186,7 +194,7 @@ export default function DashboardShell({
               <path d="M8 1L15 4.5V11.5L8 15L1 11.5V4.5L8 1Z" />
             </svg>
           </div>
-          <span className="font-semibold text-zinc-900">Chichi</span>
+          <span className="font-semibold text-zinc-900">{BRAND_NAME}</span>
         </div>
         <button
           onClick={() => setMenuOpen((o) => !o)}

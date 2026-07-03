@@ -108,5 +108,5 @@ export function resolvePostAuthPath(profile: UserProfile): string {
   if (!profile.onboardingComplete) {
     return `/onboarding?role=${profile.signupIntent}`;
   }
-  return profile.activeRole === "creator" ? "/dashboard/creator" : "/dashboard/member";
+  return profile.activeRole === "creator" ? "/dashboard/creator/overview" : "/dashboard/member/overview";
 }

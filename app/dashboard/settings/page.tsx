@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useProfile } from "@/lib/auth/useProfile";
 import { isCreator, type Role } from "@/lib/auth/roles";
 import { setActiveRole } from "@/lib/db/profile";
+import { storeDisplayUrl } from "@/lib/brand";
 import CreatorOnboarding from "@/app/onboarding/CreatorOnboarding";
 
 export default function SettingsPage() {
@@ -26,7 +27,7 @@ export default function SettingsPage() {
     await setActiveRole(supabase, user.id, role);
     await reload();
     setSwitching(false);
-    router.push(role === "creator" ? "/dashboard/creator" : "/dashboard/member");
+    router.push(role === "creator" ? "/dashboard/creator/overview" : "/dashboard/member/overview");
     router.refresh();
   };
 
@@ -47,8 +48,8 @@ export default function SettingsPage() {
             mode="settings"
             onComplete={async () => {
               await reload();
-              router.push("/dashboard/creator");
               router.refresh();
+              router.push("/dashboard/creator/overview");
             }}
             onSaveLater={() => setActivating(false)}
           />
@@ -137,7 +138,7 @@ export default function SettingsPage() {
               <div className="flex justify-between gap-4">
                 <dt className="text-zinc-500">Store</dt>
                 <dd className="font-medium text-zinc-900">
-                  {profile.store ? `store.chichi.co/${profile.store.slug}` : "—"}
+                  {profile.store ? storeDisplayUrl(profile.store.slug) : "—"}
                 </dd>
               </div>
               <div className="flex justify-between gap-4">

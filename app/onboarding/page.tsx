@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useMemo } from "react";
+import { Suspense, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { useProfile } from "@/lib/auth/useProfile";
@@ -25,13 +25,18 @@ function OnboardingContent() {
 
   const nextPath = searchParams.get("next") || "";
 
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace("/login?next=/onboarding");
+    }
+  }, [loading, user, router]);
+
   if (loading) {
     return <CenteredNote text="Loading..." />;
   }
 
   if (!user) {
-    router.replace("/login?next=/onboarding");
-    return null;
+    return <CenteredNote text="Redirecting to sign in..." />;
   }
 
   if (role === "creator") {
@@ -42,11 +47,11 @@ function OnboardingContent() {
         initial={profile}
         mode="onboarding"
         onComplete={() => {
-          router.replace("/dashboard/creator");
+          router.replace("/dashboard/creator/overview");
           router.refresh();
         }}
         onSaveLater={() => {
-          router.replace("/dashboard/member");
+          router.replace("/dashboard/member/overview");
           router.refresh();
         }}
       />
@@ -59,7 +64,7 @@ function OnboardingContent() {
       userId={user.id}
       initial={profile}
       onComplete={() => {
-        router.replace(nextPath || "/dashboard/member");
+        router.replace(nextPath || "/dashboard/member/overview");
         router.refresh();
       }}
     />

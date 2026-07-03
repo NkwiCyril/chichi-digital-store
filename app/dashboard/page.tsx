@@ -10,5 +10,5 @@ export default async function DashboardIndex() {
   } = await supabase.auth.getUser();
 
   const profile = await fetchProfile(supabase, user);
-  redirect(profile.activeRole === "creator" ? "/dashboard/creator" : "/dashboard/member");
+  redirect(profile.activeRole === "creator" ? "/dashboard/creator/overview" : "/dashboard/member/overview");
 }
