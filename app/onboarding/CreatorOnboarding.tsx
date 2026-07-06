@@ -55,6 +55,7 @@ export default function CreatorOnboarding({
   onSaveLater,
 }: CreatorOnboardingProps) {
   const [step, setStep] = useState(1);
+  const [done, setDone] = useState(false);
   const [slugEdited, setSlugEdited] = useState(Boolean(initial.store?.slug));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [banner, setBanner] = useState<string | null>(null);
@@ -156,7 +157,7 @@ export default function CreatorOnboarding({
 
   const handleFinish = async () => {
     if (!validateStep(3)) return;
-    if (await persist(true)) onComplete();
+    if (await persist(true)) setDone(true);
   };
 
   const titles = [
@@ -164,6 +165,29 @@ export default function CreatorOnboarding({
     { title: "Create your store", subtitle: `This is your public storefront on ${BRAND_NAME}.` },
     { title: "Get paid", subtitle: "Where should we send your earnings?" },
   ];
+
+  if (done) {
+    return (
+      <div className="py-6 text-center space-y-5">
+        <div className="flex items-center justify-center">
+          <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center">
+            <svg className="w-8 h-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+          </div>
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold text-zinc-900 mb-2">🎉 Congratulations!</h2>
+          <p className="text-sm text-zinc-500 max-w-sm mx-auto">
+            Your creator profile is live. Head to your dashboard to create your first course or upload a digital product.
+          </p>
+        </div>
+        <PrimaryButton onClick={onComplete}>
+          Go to dashboard
+        </PrimaryButton>
+      </div>
+    );
+  }
 
   return (
     <div>
