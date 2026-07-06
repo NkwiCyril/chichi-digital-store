@@ -3,6 +3,22 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BRAND_NAME } from "@/lib/brand";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+
+interface NavUser {
+  avatarUrl: string | null;
+  displayName: string | null;
+}
+
+function initialsOf(name: string) {
+  return name
+    .split(" ")
+    .map((s) => s[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
 
 const navLinks = [
   ["Features", "#features"],
@@ -14,13 +30,38 @@ const navLinks = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [navUser, setNavUser] = useState<NavUser | null>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 8);
-
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const supabase = createSupabaseBrowserClient();
+
+    const loadUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) { setNavUser(null); return; }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("display_name, avatar_url")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      setNavUser({
+        avatarUrl: profile?.avatar_url ?? null,
+        displayName: profile?.display_name ?? session.user.email ?? null,
+      });
+    };
+
+    loadUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => { loadUser(); });
+    return () => subscription.unsubscribe();
   }, []);
 
   return (
@@ -59,16 +100,39 @@ export default function Navbar() {
           </nav>
 
           {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-4">
-            <Link href="/login" className="text-sm text-zinc-500 hover:text-zinc-900 transition-colors">
-              Sign in
-            </Link>
-            <Link
-              href="/register?role=creator"
-              className="text-sm font-medium bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              Start selling
-            </Link>
+          <div className="hidden md:flex items-center gap-3">
+            {navUser ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="text-sm font-medium bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  Dashboard
+                </Link>
+                <Link href="/dashboard" className="h-8 w-8 overflow-hidden rounded-full bg-linear-to-br from-violet-400 to-purple-600 flex items-center justify-center shrink-0">
+                  {navUser.avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={navUser.avatarUrl} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="text-xs font-bold text-white">
+                      {navUser.displayName ? initialsOf(navUser.displayName) : "?"}
+                    </span>
+                  )}
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="text-sm text-zinc-500 hover:text-zinc-900 transition-colors">
+                  Sign in
+                </Link>
+                <Link
+                  href="/register?role=creator"
+                  className="text-sm font-medium bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  Start selling
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile toggle */}
@@ -101,15 +165,28 @@ export default function Navbar() {
               </Link>
             ))}
             <div className="mt-3 pt-3 border-t border-zinc-100 flex flex-col gap-2">
-              <Link href="/login" className="py-2.5 px-1 text-sm text-zinc-600 hover:text-zinc-900">
-                Sign in
-              </Link>
-              <Link
-                href="/register?role=creator"
-                className="text-center text-sm font-medium bg-violet-600 text-white py-2.5 rounded-lg hover:bg-violet-700 transition-colors"
-              >
-                Start selling
-              </Link>
+              {navUser ? (
+                <Link
+                  href="/dashboard"
+                  onClick={() => setOpen(false)}
+                  className="text-center text-sm font-medium bg-violet-600 text-white py-2.5 rounded-lg hover:bg-violet-700 transition-colors"
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link href="/login" onClick={() => setOpen(false)} className="py-2.5 px-1 text-sm text-zinc-600 hover:text-zinc-900">
+                    Sign in
+                  </Link>
+                  <Link
+                    href="/register?role=creator"
+                    onClick={() => setOpen(false)}
+                    className="text-center text-sm font-medium bg-violet-600 text-white py-2.5 rounded-lg hover:bg-violet-700 transition-colors"
+                  >
+                    Start selling
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}
