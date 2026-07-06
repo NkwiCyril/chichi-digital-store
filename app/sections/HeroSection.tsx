@@ -4,25 +4,25 @@ export default function HeroSection() {
       name: "Packaging Design Kit Pro",
       cat: "Design Templates",
       price: "XAF 29,000",
-      gradient: "from-violet-400 to-purple-600",
+      img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80&auto=format&fit=crop",
     },
     {
       name: "Brand Library 2.0",
       cat: "Digital Assets",
       price: "XAF 18,000",
-      gradient: "from-blue-400 to-indigo-600",
+      img: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&q=80&auto=format&fit=crop",
     },
     {
       name: "Branding Starter Kit",
       cat: "Templates",
       price: "XAF 24,000",
-      gradient: "from-rose-400 to-pink-600",
+      img: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&q=80&auto=format&fit=crop",
     },
     {
       name: "Package Designer - Beginner to Pro",
       cat: "Course",
       price: "XAF 35,000",
-      gradient: "from-amber-400 to-orange-500",
+      img: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&q=80&auto=format&fit=crop",
     },
   ] as const;
 
@@ -39,13 +39,6 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Text */}
           <div className="max-w-xl">
-            <div className="inline-flex items-center gap-2 bg-violet-50 border border-violet-200 rounded-full px-3 py-1.5 mb-8">
-              <span className="w-1.5 h-1.5 rounded-full bg-violet-500" />
-              <span className="text-xs font-medium text-violet-700">
-                Growing creator community in Cameroon
-              </span>
-            </div>
-
             <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-zinc-900 leading-[1.08] mb-6">
               The simplest way to{" "}
               <span className="text-violet-600">sell digital products</span>
@@ -125,7 +118,12 @@ export default function HeroSection() {
               {/* Store body */}
               <div className="p-5 bg-white">
                 <div className="flex items-center gap-3 mb-5">
-                  <div className="w-10 h-10 rounded-full bg-linear-to-br from-violet-400 to-purple-600 shrink-0" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://images.unsplash.com/photo-1499887142886-791eca5918cd?w=80&q=80&auto=format&fit=crop"
+                  alt="Mukstyle"
+                  className="w-10 h-10 rounded-full object-cover shrink-0"
+                />
                   <div>
                     <p className="text-sm font-semibold text-zinc-900">
                       Mukstyle&apos;s Digital Shop
@@ -142,7 +140,8 @@ export default function HeroSection() {
                       key={product.name}
                       className="rounded-xl overflow-hidden border border-zinc-100"
                     >
-                      <div className={`h-20 bg-linear-to-br ${product.gradient}`} />
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={product.img} alt={product.name} className="h-20 w-full object-cover" />
                       <div className="p-2.5">
                         <p className="text-xs font-semibold text-zinc-900 truncate">
                           {product.name}
