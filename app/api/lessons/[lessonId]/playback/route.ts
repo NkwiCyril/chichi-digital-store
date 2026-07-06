@@ -1,6 +1,23 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { isBunnyConfigured } from "@/lib/bunny/config";
-import { signedHlsUrl, publicHlsUrl } from "@/lib/bunny/client";
+import {
+  isStreamConfigured,
+  isSignedPlaybackConfigured,
+  signPlaybackToken,
+  hlsManifestUrl,
+  thumbnailUrl,
+} from "@/lib/cloudflare/stream";
+
+export const runtime = "nodejs";
+
+async function playbackResponse(videoUid: string, preview: boolean) {
+  // When signing keys are configured, mint a short-lived per-viewer token.
+  const token = isSignedPlaybackConfigured() ? await signPlaybackToken(videoUid) : null;
+  return Response.json({
+    url: hlsManifestUrl(videoUid, token),
+    poster: thumbnailUrl(videoUid),
+    preview,
+  });
+}
 
 export async function GET(
   _request: Request,
@@ -8,7 +25,7 @@ export async function GET(
 ) {
   const { lessonId } = await params;
 
-  if (!isBunnyConfigured()) {
+  if (!isStreamConfigured()) {
     return Response.json({ error: "Video streaming is not configured." }, { status: 503 });
   }
 
@@ -20,7 +37,7 @@ export async function GET(
   // Fetch the lesson
   const { data: lesson, error: lessonError } = await supabase
     .from("lessons")
-    .select("id, course_id, bunny_video_id, is_preview, status")
+    .select("id, course_id, video_uid, is_preview, status")
     .eq("id", lessonId)
     .maybeSingle();
 
@@ -28,16 +45,13 @@ export async function GET(
     return Response.json({ error: "Lesson not found." }, { status: 404 });
   }
 
-  if (!lesson.bunny_video_id || lesson.status !== "ready") {
+  if (!lesson.video_uid || lesson.status !== "ready") {
     return Response.json({ error: "Video is not available." }, { status: 404 });
   }
 
   // Preview lessons are publicly accessible
   if (lesson.is_preview) {
-    return Response.json({
-      url: publicHlsUrl(lesson.bunny_video_id),
-      preview: true,
-    });
+    return playbackResponse(lesson.video_uid, true);
   }
 
   // Non-preview lessons require authentication + enrollment
@@ -76,8 +90,5 @@ export async function GET(
     }
   }
 
-  return Response.json({
-    url: signedHlsUrl(lesson.bunny_video_id),
-    preview: false,
-  });
+  return playbackResponse(lesson.video_uid, false);
 }

@@ -154,6 +154,25 @@ export default function CurriculumBuilder({
     });
   };
 
+  const syncLesson = (lessonId: string, sectionId: string) => {
+    startTransition(async () => {
+      const res = await fetch(`/api/lessons/${lessonId}/sync`, { method: "POST" });
+      if (res.ok) {
+        const updated = await res.json();
+        onChange(
+          sections.map((s) =>
+            s.id === sectionId
+              ? {
+                  ...s,
+                  lessons: s.lessons.map((l) => (l.id === lessonId ? { ...l, ...updated } : l)),
+                }
+              : s
+          )
+        );
+      }
+    });
+  };
+
   const onUploadComplete = (lessonId: string, sectionId: string, updatedLesson: Partial<Lesson>) => {
     onChange(
       sections.map((s) =>
@@ -293,7 +312,7 @@ export default function CurriculumBuilder({
                       )}
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      {!lesson.bunny_video_id && (
+                      {!lesson.video_uid && (
                         <button
                           onClick={() => setUploadingLessonId(lesson.id)}
                           className="cursor-pointer rounded-lg border border-violet-200 bg-violet-50 px-2.5 py-1 text-xs font-semibold text-violet-600 hover:bg-violet-100 transition-colors"
@@ -301,8 +320,25 @@ export default function CurriculumBuilder({
                           Upload video
                         </button>
                       )}
-                      {lesson.bunny_video_id && lesson.status === "ready" && (
+                      {lesson.video_uid && lesson.status === "processing" && (
+                        <button
+                          onClick={() => syncLesson(lesson.id, section.id)}
+                          disabled={pending}
+                          className="cursor-pointer rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 hover:bg-amber-100 transition-colors"
+                        >
+                          Check status
+                        </button>
+                      )}
+                      {lesson.video_uid && lesson.status === "ready" && (
                         <span className="text-xs text-emerald-600 font-medium">Video ready</span>
+                      )}
+                      {lesson.video_uid && lesson.status === "error" && (
+                        <button
+                          onClick={() => setUploadingLessonId(lesson.id)}
+                          className="cursor-pointer rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-100 transition-colors"
+                        >
+                          Re-upload
+                        </button>
                       )}
                       <button
                         onClick={() => togglePreview(lesson, section.id)}

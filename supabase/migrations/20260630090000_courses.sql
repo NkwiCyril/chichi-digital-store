@@ -88,7 +88,8 @@ create table if not exists public.lessons (
   title          text not null default 'Untitled lesson',
   position       integer not null default 0,
   is_preview     boolean not null default false,
-  bunny_video_id text,
+  video_uid      text,
+  video_provider text not null default 'cloudflare',
   status         public.lesson_status not null default 'processing',
   duration_sec   integer not null default 0,
   thumbnail_url  text not null default '',
@@ -99,7 +100,7 @@ create table if not exists public.lessons (
 
 create index if not exists lessons_section_id_idx on public.lessons (section_id);
 create index if not exists lessons_course_id_idx on public.lessons (course_id);
-create index if not exists lessons_bunny_video_id_idx on public.lessons (bunny_video_id) where bunny_video_id is not null;
+create index if not exists lessons_video_uid_idx on public.lessons (video_uid) where video_uid is not null;
 
 -- -----------------------------------------------------------------------------
 -- enrollments — grants playback rights for a course.

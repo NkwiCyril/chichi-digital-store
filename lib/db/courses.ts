@@ -44,7 +44,8 @@ export interface Lesson {
   title: string;
   position: number;
   is_preview: boolean;
-  bunny_video_id: string | null;
+  video_uid: string | null;
+  video_provider: string;
   status: LessonStatus;
   duration_sec: number;
   thumbnail_url: string;
@@ -68,7 +69,7 @@ const COURSE_COLUMNS =
   "id, store_id, title, slug, summary, description, cover_url, price_xaf, level, language, status, total_duration_sec, lesson_count, published_at, created_at, updated_at";
 
 const LESSON_COLUMNS =
-  "id, section_id, course_id, title, position, is_preview, bunny_video_id, status, duration_sec, thumbnail_url";
+  "id, section_id, course_id, title, position, is_preview, video_uid, video_provider, status, duration_sec, thumbnail_url";
 
 /** The store owned by a user (one per creator in the current model). */
 export async function fetchOwnerStore(

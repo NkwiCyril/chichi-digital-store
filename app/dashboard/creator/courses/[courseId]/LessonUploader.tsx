@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import * as tus from "tus-js-client";
 import type { Lesson } from "@/lib/db/courses";
 
 interface LessonUploaderProps {
@@ -11,12 +12,9 @@ interface LessonUploaderProps {
   onCancel: () => void;
 }
 
-interface TusCredentials {
-  endpoint: string;
-  libraryId: string;
-  videoId: string;
-  signature: string;
-  expiration: number;
+interface UploadTarget {
+  uploadURL: string;
+  uid: string;
 }
 
 export default function LessonUploader({
@@ -30,7 +28,7 @@ export default function LessonUploader({
   const [phase, setPhase] = useState<"select" | "uploading" | "done" | "error">("select");
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const xhrRef = useRef<XMLHttpRequest | null>(null);
+  const uploadRef = useRef<tus.Upload | null>(null);
 
   const startUpload = async (file: File) => {
     setPhase("uploading");
@@ -38,26 +36,26 @@ export default function LessonUploader({
     setError(null);
 
     try {
-      // 1. Get TUS credentials from our API
-      const credRes = await fetch(`/api/courses/${courseId}/lessons/${lessonId}/upload`, {
+      // 1. Ask our API for a one-time Cloudflare direct-creator upload URL.
+      const targetRes = await fetch(`/api/courses/${courseId}/lessons/${lessonId}/upload`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uploadLength: file.size, fileName: file.name }),
       });
 
-      if (!credRes.ok) {
-        const data = await credRes.json().catch(() => ({}));
+      if (!targetRes.ok) {
+        const data = await targetRes.json().catch(() => ({}));
         throw new Error(data.error || "Failed to prepare upload.");
       }
 
-      const creds: TusCredentials = await credRes.json();
+      const target: UploadTarget = await targetRes.json();
 
-      // 2. Upload directly to Bunny via TUS
-      // Using a simple chunked PUT since tus-js-client may not be installed.
-      // Bunny also supports direct PUT uploads.
-      await uploadToBunny(creds, file);
+      // 2. Upload directly to Cloudflare Stream via resumable TUS.
+      await uploadToStream(target, file);
 
       setPhase("done");
       onComplete({
-        bunny_video_id: creds.videoId,
+        video_uid: target.uid,
         status: "processing",
       });
     } catch (err) {
@@ -66,39 +64,23 @@ export default function LessonUploader({
     }
   };
 
-  const uploadToBunny = (creds: TusCredentials, file: File): Promise<void> => {
+  const uploadToStream = (target: UploadTarget, file: File): Promise<void> => {
     return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhrRef.current = xhr;
-
-      // Use the TUS creation endpoint with Bunny's metadata headers
-      xhr.open("POST", creds.endpoint, true);
-      xhr.setRequestHeader("AuthorizationSignature", creds.signature);
-      xhr.setRequestHeader("AuthorizationExpire", String(creds.expiration));
-      xhr.setRequestHeader("VideoId", creds.videoId);
-      xhr.setRequestHeader("LibraryId", creds.libraryId);
-      xhr.setRequestHeader("Content-Type", "application/offset+octet-stream");
-      xhr.setRequestHeader("Upload-Length", String(file.size));
-      xhr.setRequestHeader("Upload-Offset", "0");
-
-      xhr.upload.onprogress = (e) => {
-        if (e.lengthComputable) {
-          setProgress(Math.round((e.loaded / e.total) * 100));
-        }
-      };
-
-      xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          resolve();
-        } else {
-          reject(new Error(`Upload failed with status ${xhr.status}`));
-        }
-      };
-
-      xhr.onerror = () => reject(new Error("Network error during upload."));
-      xhr.onabort = () => reject(new Error("Upload cancelled."));
-
-      xhr.send(file);
+      const upload = new tus.Upload(file, {
+        uploadUrl: target.uploadURL,
+        chunkSize: 50 * 1024 * 1024,
+        retryDelays: [0, 3000, 5000, 10000, 20000],
+        metadata: { filename: file.name, filetype: file.type },
+        onProgress: (bytesSent, bytesTotal) => {
+          if (bytesTotal > 0) {
+            setProgress(Math.round((bytesSent / bytesTotal) * 100));
+          }
+        },
+        onError: (err) => reject(err instanceof Error ? err : new Error(String(err))),
+        onSuccess: () => resolve(),
+      });
+      uploadRef.current = upload;
+      upload.start();
     });
   };
 
@@ -121,8 +103,8 @@ export default function LessonUploader({
   };
 
   const cancelUpload = () => {
-    if (xhrRef.current) {
-      xhrRef.current.abort();
+    if (uploadRef.current) {
+      void uploadRef.current.abort();
     }
     onCancel();
   };
@@ -180,7 +162,7 @@ export default function LessonUploader({
 
       {phase === "done" && (
         <div className="rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
-          Upload complete. The video is now being processed by Bunny Stream.
+          Upload complete. The video is now being processed by Cloudflare Stream.
         </div>
       )}
 

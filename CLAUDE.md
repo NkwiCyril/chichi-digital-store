@@ -47,16 +47,17 @@ Users have a single account that can be both **buyer** and **creator**. Key type
 - `app/dashboard/*` — Protected dashboards with `DashboardShell` layout, role switcher, and settings.
 - `app/dashboard/creator/courses/*` — Course management: list, create, edit (details/curriculum/pricing), publish.
 - `app/(store)/[storeSlug]/*` — Public storefront pages (store profile, course landing pages).
-- `app/api/courses/*` — Course CRUD, section/lesson management, publish/unpublish, Bunny video upload.
+- `app/api/courses/*` — Course CRUD, section/lesson management, publish/unpublish, Cloudflare Stream direct-upload URL creation.
 - `app/api/lessons/[lessonId]/playback` — Signed HLS URL generation (enrollment-gated).
+- `app/api/lessons/[lessonId]/sync` — Manual poll of Cloudflare video status (webhook fallback for local dev).
 - `app/api/progress` — Save/fetch lesson watch progress.
-- `app/api/webhooks/bunny` — Bunny Stream encode-complete webhook.
+- `app/api/webhooks/cloudflare` — Cloudflare Stream encode-complete webhook.
 
-### Video pipeline (Bunny Stream)
-- `lib/bunny/config.ts` — server-only config from env vars.
-- `lib/bunny/client.ts` — create/get/delete videos, TUS upload credentials, signed & public HLS URLs, thumbnail URLs, status mapping.
-- Upload flow: API creates Bunny video object → browser uploads via TUS → Bunny webhook on encode-complete updates lesson status/duration/thumbnail.
-- Playback: `/api/lessons/[id]/playback` checks enrollment or ownership, returns signed HLS URL.
+### Video pipeline (Cloudflare Stream)
+- `lib/cloudflare/stream.ts` — server-only config, direct-creator-upload URL creation, video fetch/delete, JWT-signed HLS playback URLs, webhook signature verification, status mapping.
+- Upload flow: API requests a direct-upload URL from Cloudflare → browser uploads via tus (`tus-js-client`) → Cloudflare webhook on encode-complete updates lesson `status`/`duration_sec`/`thumbnail_url`.
+- Playback: `/api/lessons/[id]/playback` checks enrollment or ownership, mints a short-lived signed JWT and returns the HLS URL.
+- Lessons store `video_uid` + `video_provider` (provider-agnostic columns).
 
 ### Database
 Migrations in `supabase/migrations/`:
@@ -83,10 +84,12 @@ SUPABASE_SERVICE_ROLE_KEY=...              # server-only, for webhooks
 NEXT_PUBLIC_BRAND_NAME=Chichi
 NEXT_PUBLIC_ROOT_DOMAIN=chichi.cm
 
-# Bunny Stream (optional, video features disabled without these)
-BUNNY_STREAM_LIBRARY_ID=...
-BUNNY_STREAM_API_KEY=...
-BUNNY_STREAM_CDN_HOSTNAME=...             # e.g. vz-xxxx.b-cdn.net
-BUNNY_STREAM_TOKEN_AUTH_KEY=...            # for signed playback URLs
-BUNNY_STREAM_WEBHOOK_SECRET=...            # optional, verify webhook origin
+# Cloudflare Stream (optional, video features disabled without these)
+CLOUDFLARE_ACCOUNT_ID=...
+CLOUDFLARE_STREAM_API_TOKEN=...                  # Stream:Edit token — secret
+CLOUDFLARE_STREAM_CUSTOMER_SUBDOMAIN=...         # e.g. customer-xxxx.cloudflarestream.com
+CLOUDFLARE_STREAM_SIGNING_KEY_ID=...             # from POST /stream/keys, for signed playback
+CLOUDFLARE_STREAM_SIGNING_KEY_PEM=...            # PKCS8 RSA private key (raw PEM or base64) — secret
+CLOUDFLARE_STREAM_WEBHOOK_SECRET=...             # verify webhook origin — secret
+CLOUDFLARE_STREAM_ALLOWED_ORIGINS=...            # optional, comma-separated playback origins
 ```

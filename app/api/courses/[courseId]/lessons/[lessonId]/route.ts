@@ -53,19 +53,19 @@ export async function DELETE(
     return Response.json({ error: "Authentication required." }, { status: 401 });
   }
 
-  // Check for Bunny video
+  // Remove the backing Cloudflare Stream video (best-effort).
   const { data: lesson } = await supabase
     .from("lessons")
-    .select("bunny_video_id")
+    .select("video_uid")
     .eq("id", lessonId)
     .maybeSingle();
 
-  if (lesson?.bunny_video_id) {
+  if (lesson?.video_uid) {
     try {
-      const { deleteBunnyVideo } = await import("@/lib/bunny/client");
-      await deleteBunnyVideo(lesson.bunny_video_id);
+      const { deleteStreamVideo } = await import("@/lib/cloudflare/stream");
+      await deleteStreamVideo(lesson.video_uid);
     } catch {
-      // Bunny not configured
+      // Stream not configured — skip
     }
   }
 

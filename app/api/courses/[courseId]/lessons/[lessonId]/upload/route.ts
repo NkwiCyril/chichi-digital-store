@@ -1,9 +1,10 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { isBunnyConfigured } from "@/lib/bunny/config";
-import { createBunnyVideo, createTusUploadCredentials } from "@/lib/bunny/client";
+import { isStreamConfigured, createDirectUpload } from "@/lib/cloudflare/stream";
+
+export const runtime = "nodejs";
 
 export async function POST(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ courseId: string; lessonId: string }> }
 ) {
   const { lessonId } = await params;
@@ -16,17 +17,27 @@ export async function POST(
     return Response.json({ error: "Authentication required." }, { status: 401 });
   }
 
-  if (!isBunnyConfigured()) {
+  if (!isStreamConfigured()) {
     return Response.json(
-      { error: "Video uploads are not configured. Set BUNNY_STREAM_* environment variables." },
+      { error: "Video uploads are not configured. Set CLOUDFLARE_STREAM_* environment variables." },
       { status: 503 }
     );
   }
 
-  // Fetch the lesson to get its title
+  const body = (await request.json().catch(() => ({}))) as {
+    uploadLength?: number;
+    fileName?: string;
+  };
+  const uploadLength = Number(body.uploadLength);
+  if (!uploadLength || uploadLength <= 0) {
+    return Response.json({ error: "uploadLength (bytes) is required." }, { status: 400 });
+  }
+
+  // Ownership is enforced by RLS: this select only returns the lesson if the
+  // authenticated user owns the parent course's store.
   const { data: lesson, error: lessonError } = await supabase
     .from("lessons")
-    .select("id, title, bunny_video_id")
+    .select("id, title, video_uid")
     .eq("id", lessonId)
     .maybeSingle();
 
@@ -34,20 +45,17 @@ export async function POST(
     return Response.json({ error: "Lesson not found." }, { status: 404 });
   }
 
-  // Create a Bunny video object
-  const video = await createBunnyVideo(lesson.title);
+  // Create a one-time direct-creator upload URL (signed playback required).
+  const { uploadURL, uid } = await createDirectUpload({
+    uploadLength,
+    name: lesson.title || body.fileName || "lesson-video",
+    requireSignedURLs: true,
+  });
 
-  // Update the lesson with the Bunny video ID
   await supabase
     .from("lessons")
-    .update({
-      bunny_video_id: video.guid,
-      status: "processing",
-    })
+    .update({ video_uid: uid, video_provider: "cloudflare", status: "processing" })
     .eq("id", lessonId);
 
-  // Return TUS upload credentials
-  const credentials = createTusUploadCredentials(video.guid);
-
-  return Response.json(credentials);
+  return Response.json({ uploadURL, uid });
 }

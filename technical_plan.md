@@ -1,9 +1,9 @@
 # Technical Plan — Video Course Marketplace for Cameroonian Professionals
 
-A phased plan to evolve the current Next.js + Supabase app into a video-first course marketplace, using Bunny Stream (HLS) + a custom Plyr player for in-platform viewing, path-based personalized stores (designed for future subdomains/custom domains), one-time MoMo/Orange course purchases, and a brand-agnostic config so the upcoming rename is trivial.
+A phased plan to evolve the current Next.js + Supabase app into a video-first course marketplace, using Cloudflare Stream (HLS) + a custom Plyr player for in-platform viewing, path-based personalized stores (designed for future subdomains/custom domains), one-time MoMo/Orange course purchases, and a brand-agnostic config so the upcoming rename is trivial.
 
 ## Decisions locked in (from your answers)
-- **Video:** Bunny Stream (auto-transcode to HLS, signed token auth, Johannesburg PoP) + custom **Plyr** player; watch progress stored in Supabase.
+- **Video:** Cloudflare Stream (auto-transcode to HLS, JWT signed-URL playback, global CDN) + custom **Plyr** player; watch progress stored in Supabase.
 - **Store links:** **Path-based now** (`store.chichi.cm/{slug}`), data model built so **subdomains + custom domains** can be added later.
 - **Monetization:** **One-time purchase per course** (lifetime access), keeping the existing 10% commission.
 - **MVP focus:** **Creator course authoring** first (create course → upload video → structure → price → publish).
@@ -19,14 +19,14 @@ A phased plan to evolve the current Next.js + Supabase app into a video-first co
 - **Bandwidth/mobile-first:** adaptive HLS is mandatory; default to lower starting rendition; aggressive caching; minimal JS on store/course pages.
 - **Payments:** card penetration is low — MTN MoMo / Orange Money via a local aggregator is the primary rail; treat payment as async + webhook-confirmed.
 - **Piracy/trust:** short-lived signed playback tokens, domain-locked, optional viewer-email watermark; no public file URLs.
-- **Cost control:** Bunny per-minute pricing + Supabase keep fixed costs low at small scale.
+- **Cost control:** Cloudflare Stream per-minute pricing + Supabase keep fixed costs low at small scale.
 
 ---
 
 ## Target architecture
 
 ### Stack additions
-- **Bunny Stream** for video storage, transcoding, HLS delivery, signed playback.
+- **Cloudflare Stream** for video storage, transcoding, HLS delivery, signed playback.
 - **Plyr + hls.js** for the player UI; progress + completion tracked in Supabase.
 - **Payment aggregator** (decision below) for MoMo/Orange collection via webhooks.
 - **Brand config**: `NEXT_PUBLIC_BRAND_NAME` + `NEXT_PUBLIC_ROOT_DOMAIN` env vars and a `lib/brand.ts` constant; all UI/store-URL strings read from it so renaming away from "chichi" is a one-line change.
@@ -35,7 +35,7 @@ A phased plan to evolve the current Next.js + Supabase app into a video-first co
 New tables (all RLS: public read of *published* rows, owner-only writes; purchase-gated reads for video tokens):
 - **`courses`** — `id, store_id, title, slug, summary, description, cover_url, price_xaf, status(draft|published|archived), level, language, total_duration_sec, lesson_count, published_at, timestamps`.
 - **`course_sections`** — `id, course_id, title, position`.
-- **`lessons`** — `id, section_id, course_id, title, position, is_preview(bool), bunny_video_id, duration_sec, status(processing|ready|error), thumbnail_url, attachments`.
+- **`lessons`** — `id, section_id, course_id, title, position, is_preview(bool), video_uid, video_provider, duration_sec, status(processing|ready|error), thumbnail_url, attachments`.
 - **`enrollments`** — `id, user_id, course_id, source(purchase|gift|admin), created_at` (unique `user_id+course_id`); grants playback rights.
 - **`orders`** — `id, user_id, course_id, amount_xaf, commission_xaf, status(pending|paid|failed|refunded), provider, provider_ref, idempotency_key, timestamps`.
 - **`lesson_progress`** — `user_id, lesson_id, course_id, position_sec, completed(bool), updated_at` (unique `user_id+lesson_id`).
@@ -64,13 +64,13 @@ New tables (all RLS: public read of *published* rows, owner-only writes; purchas
 ### Phase 0 — Hardening + foundations (short)
 - Brand config (`lib/brand.ts` + env), replace hardcoded "Chichi"/domain strings.
 - Fix known bugs: robust enum-array writes, onboarding redirect in `useEffect`, email-confirmation messaging.
-- Add Bunny + aggregator env vars and server-only secrets handling.
+- Add Cloudflare Stream + aggregator env vars and server-only secrets handling.
 - Migration for `courses/sections/lessons/enrollments/orders/lesson_progress` + `stores` domain columns.
 
 ### Phase 1 — Creator course authoring (MVP focus)
 - Creator dashboard: **Courses** list (draft/published), create/edit course (title, slug, price, cover, description, level/language).
 - **Section/lesson builder**: add sections, add lessons, reorder (drag), mark preview lessons.
-- **Bunny upload**: server creates Bunny video object → resumable (TUS) upload from browser → store `bunny_video_id`; **webhook** on encode-complete sets `status=ready`, `duration_sec`, `thumbnail_url`.
+- **Cloudflare upload**: server requests a direct-creator-upload URL → resumable (tus) upload from browser → store `video_uid`; **webhook** on encode-complete sets `status=ready`, `duration_sec`, `thumbnail_url`.
 - Publish/unpublish with validation (≥1 ready lesson, price set, cover present).
 
 ### Phase 2 — Buyer learning experience
@@ -87,7 +87,7 @@ New tables (all RLS: public read of *published* rows, owner-only writes; purchas
 ### Phase 4 — Scale & trust
 - Payout ledger + reconciliation; refund handling.
 - Observability (logging, error tracking, webhook retries/dead-letter), rate limiting.
-- Optional Bunny **MediaCage DRM** + email watermark overlay for premium piracy protection.
+- Optional Cloudflare Stream **signed-URL DRM (widevine/fairplay)** + email watermark overlay for premium piracy protection.
 
 ---
 
@@ -99,8 +99,8 @@ New tables (all RLS: public read of *published* rows, owner-only writes; purchas
 - **Rename-readiness:** because URLs build from `NEXT_PUBLIC_ROOT_DOMAIN`, switching `chichi.cm` → new domain is config-only.
 
 ## Video playback & protection — design detail
-- **Upload:** browser → our `/api/lessons/upload` (auth + ownership) creates Bunny video → TUS resumable upload (handles flaky connections) → Bunny webhook confirms encode → lesson marked `ready` with duration/thumbnail.
-- **Playback authorization:** `/api/lessons/{id}/playback` verifies the user has an `enrollment` (or lesson `is_preview`) → mints a **Bunny signed token** (short TTL, path + optional IP/referer lock) → returns HLS URL.
+- **Upload:** browser → our upload endpoint (auth + ownership) requests a Cloudflare direct-creator-upload URL → tus resumable upload (handles flaky connections) → Cloudflare webhook confirms encode → lesson marked `ready` with duration/thumbnail.
+- **Playback authorization:** `/api/lessons/{id}/playback` verifies the user has an `enrollment` (or lesson `is_preview`) → mints a **Cloudflare signed JWT** (short TTL, optional allowed-origins lock) → returns HLS URL.
 - **Player:** Plyr + hls.js; renditions auto-selected for bandwidth; saves `position_sec` every ~10s and on pause/unload; resume from last position; `completed` at ~95%.
 - **Protection:** no unsigned URLs, short token expiry, domain lock, download disabled; optional viewer-email watermark; DRM deferred to Phase 4.
 - **Progress/analytics:** `lesson_progress` powers continue-watching and course completion; aggregate later for creator analytics.
@@ -115,4 +115,4 @@ New tables (all RLS: public read of *published* rows, owner-only writes; purchas
 - **Payment reliability/disputes:** webhook-driven, idempotent orders, manual reconciliation tooling.
 - **Bandwidth/abandonment:** adaptive HLS, lightweight pages, preview lessons to build trust before paying.
 - **Piracy:** signed tokens + watermark; accept that no client-side video is 100% leak-proof without DRM.
-- **Cost spikes:** monitor Bunny minutes; cap upload sizes/length per plan tier later.
+- **Cost spikes:** monitor Cloudflare Stream minutes; cap upload sizes/length per plan tier later.
